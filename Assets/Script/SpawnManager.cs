@@ -9,6 +9,10 @@ public class SpawnManager : MonoBehaviour
     [SerializeField]
     private GameObject _enemyContainer;
     [SerializeField]
+    private GameObject _tripleShotPrefab;
+    [SerializeField]
+    private GameObject _powerUpContainer;
+    [SerializeField]
     private bool _stopSpawning = false;
 
     private const float SpawnTime = 5.0f;
@@ -19,6 +23,7 @@ public class SpawnManager : MonoBehaviour
     {
         _enemyContainerTransform = _enemyContainer.transform;
         StartCoroutine(SpawnRoutine());
+        StartCoroutine(powerUpRoutine());
     }
 
     //IEnumerator SpawnRoutine()
@@ -49,6 +54,25 @@ public class SpawnManager : MonoBehaviour
         }
     }
 
+    IEnumerator powerUpRoutine()
+    {
+        while (!_stopSpawning)
+        {
+            if (_tripleShotPrefab == null)
+            {
+                Debug.LogError("Power prefab is not assigned!");
+                yield break;
+            }
+
+            while (!_stopSpawning)
+            {
+                Vector3 posToSpawn = new Vector3(Random.Range(-8f, 8f), 7, 0);
+                GameObject newEnemy = Instantiate(_tripleShotPrefab, posToSpawn, Quaternion.identity, _enemyContainerTransform);
+                yield return new WaitForSeconds(Random.Range(1f, 20f));
+            }
+        }
+    }
+
     public void OnPlayerDeath()
     {
         _stopSpawning = true;
@@ -58,4 +82,7 @@ public class SpawnManager : MonoBehaviour
             Destroy(child.gameObject);
         }
     }
+
+
+
 }

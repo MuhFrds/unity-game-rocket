@@ -22,6 +22,9 @@ public class Player : MonoBehaviour
     private SpawnManager _spawnManager;
 
     [SerializeField]
+    private GameObject _laserContainer;
+
+    [SerializeField]
     private bool _isTripleShotActive = false;
 
 
