@@ -7,23 +7,25 @@ public class SpawnManager : MonoBehaviour
     [SerializeField]
     private GameObject _enemyPrefab;
     [SerializeField]
-    private GameObject _enemyContainer;
-    [SerializeField]
     private GameObject _tripleShotPrefab;
     [SerializeField]
-    private GameObject _powerUpContainer;
+    private GameObject _speedPrefab;
+    [SerializeField]
+    private GameObject _container;
     [SerializeField]
     private bool _stopSpawning = false;
 
     private const float SpawnTime = 5.0f;
 
-    private Transform _enemyContainerTransform;
+    private Transform _containerTransform;
 
     void Start()
     {
-        _enemyContainerTransform = _enemyContainer.transform;
+
+        _containerTransform = _container.transform;
         StartCoroutine(SpawnRoutine());
-        StartCoroutine(powerUpRoutine());
+        StartCoroutine(TripleRoutine());
+        StartCoroutine(SpeedRoutine());
     }
 
     //IEnumerator SpawnRoutine()
@@ -35,6 +37,7 @@ public class SpawnManager : MonoBehaviour
     //        yield return new WaitForSeconds(SpawnTime);
     //    }
     //}
+
     IEnumerator SpawnRoutine()
     {
         while (!_stopSpawning)
@@ -48,13 +51,13 @@ public class SpawnManager : MonoBehaviour
             while (!_stopSpawning)
             { 
             Vector3 posToSpawn = new Vector3(Random.Range(-8f, 8f), 7, 0);
-            GameObject newEnemy = Instantiate(_enemyPrefab, posToSpawn, Quaternion.identity, _enemyContainerTransform);
+            GameObject newEnemy = Instantiate(_enemyPrefab, posToSpawn, Quaternion.identity, _containerTransform);
             yield return new WaitForSeconds(SpawnTime);
             }
         }
     }
 
-    IEnumerator powerUpRoutine()
+    IEnumerator TripleRoutine()
     {
         while (!_stopSpawning)
         {
@@ -67,8 +70,27 @@ public class SpawnManager : MonoBehaviour
             while (!_stopSpawning)
             {
                 Vector3 posToSpawn = new Vector3(Random.Range(-8f, 8f), 7, 0);
-                GameObject newEnemy = Instantiate(_tripleShotPrefab, posToSpawn, Quaternion.identity, _enemyContainerTransform);
-                yield return new WaitForSeconds(Random.Range(1f, 20f));
+                GameObject newPower = Instantiate(_tripleShotPrefab, posToSpawn, Quaternion.identity, _containerTransform);
+                yield return new WaitForSeconds(Random.Range(30f, 50f));
+            }
+        }
+    }
+
+    IEnumerator SpeedRoutine()
+    {
+        while (!_stopSpawning)
+        {
+            if (_speedPrefab == null)
+            {
+                Debug.LogError("Power prefab is not assigned!");
+                yield break;
+            }
+
+            while (!_stopSpawning)
+            {
+                Vector3 posToSpawn = new Vector3(Random.Range(-8f, 8f), 7, 0);
+                GameObject newPower = Instantiate(_speedPrefab, posToSpawn, Quaternion.identity, _containerTransform);
+                yield return new WaitForSeconds(Random.Range(10f, 30f));
             }
         }
     }
@@ -77,12 +99,9 @@ public class SpawnManager : MonoBehaviour
     {
         _stopSpawning = true;
 
-        foreach (Transform child in _enemyContainerTransform)
+        foreach (Transform child in _containerTransform)
         {
             Destroy(child.gameObject);
         }
     }
-
-
-
 }

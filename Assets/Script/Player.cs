@@ -19,17 +19,20 @@ public class Player : MonoBehaviour
 
     [SerializeField]
     private float _lives = 3;
-    private SpawnManager _spawnManager;
-
     [SerializeField]
-    private GameObject _laserContainer;
+    private GameObject gameOverPanel;
+    private SpawnManager _spawnManager;
 
     [SerializeField]
     private bool _isTripleShotActive = false;
 
+    [SerializeField]
+    private bool _isSpeedActive = false;
+
 
     void Start()
     {
+        gameOverPanel.SetActive(false);
         transform.position = new Vector3(0, 0, 0);
 
         _spawnManager = GameObject.Find("Spawn_Manager").GetComponent<SpawnManager>();
@@ -46,7 +49,6 @@ public class Player : MonoBehaviour
         }
 
     }
-
 
     void Movement()
     {
@@ -79,6 +81,18 @@ public class Player : MonoBehaviour
         
     }
 
+    void Speed()
+    {
+        if(_isSpeedActive == true)
+        {
+            _speed = 8f;
+        }
+        else
+        {
+            _speed = 3.5f;
+        }
+    }
+
     void FireLaser ()
     {
         _canFire = Time.time + _fireRate;
@@ -99,6 +113,7 @@ public class Player : MonoBehaviour
 
         if (_lives < 1)
         {
+            gameOverPanel.SetActive(true);
             _spawnManager.OnPlayerDeath();
             Destroy(this.gameObject);
         }
@@ -114,5 +129,17 @@ public class Player : MonoBehaviour
     {
         yield return new WaitForSeconds(6.8f);
         _isTripleShotActive = false;
+    }
+
+    public void SpeedActive()
+    {
+        _isSpeedActive = true;
+        StartCoroutine(SpeedPowerDownRoutine());
+    }
+
+    IEnumerator SpeedPowerDownRoutine()
+    {
+        yield return new WaitForSeconds(6.8f);
+        _isSpeedActive = false;
     }
 }
